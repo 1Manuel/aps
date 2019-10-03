@@ -1,0 +1,39 @@
+\documentclass[parskip=full]{scrartcl}
+\usepackage[utf8]{inputenc} % use utf8 file encoding for TeX sources
+\usepackage[T1]{fontenc}    % avoid garbled Unicode text in pdf
+\usepackage[german]{babel}  % german hyphenation, quotes, etc
+\usepackage{hyperref}       % detailed hyperlink/pdf configuration
+\hypersetup{                % ‘texdoc hyperref‘ for options
+pdftitle={APS: Report for APP2},%
+bookmarks=true,%
+}
+\usepackage{graphicx}       % provides commands for including figures
+\usepackage{csquotes}       % provides \enquote{} macro for "quotes"
+\usepackage[nonumberlist]{glossaries}     % provides glossary commands
+\usepackage{enumitem}
+
+\setlength{\emergencystretch}{3em}
+
+
+\makenoidxglossaries
+
+\newglossaryentry{Entry_name}
+{
+	name=dummy,
+	plural=dummies,
+	description={description},
+}
+
+
+\title{APP2: Report}
+\author{Sofiane TANJI, Habib SLIM, Eslam MOHAMMED,\\ Archit YADAV, Albert STRÜMPLER, Manuel TREUTLEIN}
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+There's the text. 
+
+\printnoidxglossaries
+
+\end{document}
