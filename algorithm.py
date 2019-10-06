@@ -5,9 +5,9 @@ from collections import deque
 def pile_of_cards(n):
     """
     Returns a deque with a pile of n cards
-    Cards are represented by their value (ranging from 1 to 14)
+    Cards are represented by their value (ranging from 2 to 14)
     """
-    liste = [randint(1,14) for k in range(n)]
+    liste = [randint(2,14) for k in range(n)]
     return deque(liste)
 
 
@@ -50,7 +50,7 @@ def play_greedy(isSisterFirst, cards):
             else:
                 sum_sister += cards[-1]
                 cards.pop()
-    
+
     if sum_sister > my_sum:
         # print("Little sister won !")
         return(0)
