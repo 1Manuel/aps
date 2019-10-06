@@ -9,19 +9,35 @@ bookmarks=true,%
 }
 \usepackage{graphicx}       % provides commands for including figures
 \usepackage{csquotes}       % provides \enquote{} macro for "quotes"
-\usepackage[nonumberlist]{glossaries}     % provides glossary commands
+\usepackage{glossaries}     % provides glossary commands
 \usepackage{enumitem}
 
 \setlength{\emergencystretch}{3em}
 
 
-\makenoidxglossaries
-
-\newglossaryentry{Entry_name}
-{
-	name=dummy,
-	plural=dummies,
-	description={description},
+\makeglossaries
+\newglossaryentry{deque} {
+	name = double ended linked list,
+	description = {Standard data structure in algorithms. Each element in the list
+								 is linked by a pointer to the left and a pointer to the right element, exept
+								 the first and the last element. We can access the list only through a pointer
+								 on the first and last element.}
+}
+\newglossaryentry{pop} {
+	name = pop(),
+	description = {Get the last element in the deque. In terms of the card game this
+								 is the rightmost card.}
+}
+\newglossaryentry{popleft} {
+	name = popleft(),
+	description = {Get the first element in the deque. In terms of the card game this
+								 is the leftmost card.}
+}
+\newglossaryentry{greedy} {
+	name = greedy algorithm,
+	description = {The greedy algorithm is a heuristic algorithm pattern to solve
+								 problems through making optimal local choices. This might not
+								 be optimal in the global context.}
 }
 
 
@@ -31,8 +47,43 @@ bookmarks=true,%
 
 \maketitle
 
-\section{Introduction}
--- Our first thoughts on the problem (session 1)
+\section{Introduction and modelling}
+% Explanation of the problem and modelling.
+In this APP we have to deal with a card game played by two persons.
+One player is referred to as sister, the other player is referred to as strategist.
+A series of n cards lying on the table face up in a line. We are modelling
+the card deck through a \gls{deque}, short deque. The elments of the deque are integers
+in the range of [2, 14], whereas the value 2 represents the card 2 and the
+value 14 represents the value of an ace. All values in between are assigned
+appropriately, this means in particular for the face cards that the jack
+is modeled by 11, the queen by 12 and the king by 13.
+The deque allows according to the game rules to take only the
+rightmost or the leftmost card. The players take turns while playing the
+game and always decide to take the leftmost or rightmost card. This is
+modeled through \gls{popleft} to take leftmost card and through \gls{pop}
+to take the rightmost card. Be careful, the naming of \gls{pop} for taking
+the rightmost card can be considered not consistent with \gls{popleft}, but we
+stick to the denotation of the phyton standard library. The player with
+the highest score in the end wins. Even though we will apply different
+algorithms to solve the problem, the input and ouput of the algorithm stays the same.
+%% TODO change this section if input or ouput should be different
+The input is a list of cards represented as deque and the choice (of the sister)
+who starts the game represented as boolean. The output is 0 if the sister wins
+or the sum of the players are equal. The output is 1 if the
+player strategist wins.\\
+
+In this APP we decided to change to phyton code for representing algorithms.
+The reason for this is that phyton code has a simple structure and resembles
+pseudocode in a way. But furthermore it allows us to represent the developed
+algorithms more detailed.\\
+
+The sister will always play the so called \gls{greedy}. Therefore we first consider
+an algorithm applying this method in chapter 2. Because of some limitations
+of the \gls{greedy} we will then consider a complete solution space exploration
+in chapter 3. This gives us an optimal solution, but with an unacceptable runtime.
+For this reason we will introduce a dynamic algorithm in chapter 4, resulting
+in an optimal solution with acceptable runtime.
+
 
 \section{The greedy algorithm}
 -- Section 2 basically
@@ -51,7 +102,7 @@ bookmarks=true,%
 -- Section 3 basically
 
 \subsection{Pseudocode}
--- write down the pseudocode. 
+-- write down the pseudocode.
 
 \subsection{Complexity}
 -- short chapter about the complexity.
@@ -59,6 +110,8 @@ bookmarks=true,%
 \subsection{Discussion about possible filters.}
 -- short chapter about the complexity.
 
-\printnoidxglossaries
+\clearpage
+
+\printglossaries
 
 \end{document}
