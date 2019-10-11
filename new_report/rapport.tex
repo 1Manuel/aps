@@ -1,0 +1,248 @@
+% !TEX encoding = UTF-8 Unicode
+% -*- coding: UTF-8; -*-
+% vim: set fenc=utf-8
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{centrale}
+\usepackage{minted}
+\usepackage{enumitem}
+\usepackage{graphicx}       % provides commands for including figures
+\usepackage{csquotes}       % provides \enquote{} macro for "quotes"
+\usepackage{glossaries}     % provides glossary commands
+\lstset{
+    frame=tb, % draw a frame at the top and bottom of the code block
+    tabsize=4, % tab space width
+    showstringspaces=false, % don't mark spaces in strings
+    numbers=left, % display line numbers on the left
+    commentstyle=\color{green}, % comment color
+    keywordstyle=\color{blue}, % keyword color
+    stringstyle=\color{red} % string color
+}
+
+\hypersetup{
+    pdftitle={APP2 Report},
+    pdfauthor={Habib Slim, Sofiane Tanji, Eslam Mohammed, Archit Yadav, Albert Strümpler, Manuel Treutlein},
+    pdfsubject={Problem Solving},
+    pdfproducer={},
+    pdfkeywords={greedy, dynamic programming, complete solution space exploration, holdem, cards} %
+}
+
+\DeclareGraphicsRule{.ai}{pdf}{.ai}{} % pour insérer des documents .ai
+\graphicspath{ {./img/} {./eps/}} % pour ne pas avoir à ajouter eps/ton-image.jpg
+
+% ------------- Packages spéciaux, nécessaires pour ce rapport, à insérer ici ------------- 
+
+\makeglossaries
+\newglossaryentry{deque} {
+	name = double ended linked list,
+	description = {Standard data structure in algorithms. Each element in the list
+								 is linked by a pointer to the left and a pointer to the right element, exept
+								 the first and the last element. We can access the list only through a pointer
+								 on the first and last element.}
+}
+\newglossaryentry{pop} {
+	name = pop(),
+	description = {Get the last element in the deque. In terms of the card game this
+								 is the rightmost card.}
+}
+\newglossaryentry{popleft} {
+	name = popleft(),
+	description = {Get the first element in the deque. In terms of the card game this
+								 is the leftmost card.}
+}
+\newglossaryentry{greedy} {
+	name = greedy algorithm,
+	description = {The greedy algorithm is a heuristic algorithm pattern to solve
+								 problems through making optimal local choices. This might not
+								 be optimal in the global context.}
+}
+
+\begin{document}
+
+% --------------------------------------------------------------
+%                       Page de garde
+% --------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\includegraphics[width=0.35\textwidth]{logo-uga.png}
+\includegraphics[width=0.35\textwidth]{logoinp.png} \\[1cm]
+
+{\large Master M1 MOSIG – UGA \& Grenoble INP} \\[0.8cm]
+{\large Algorithmic Problem Solving}\\[0.5cm]
+
+% Title
+\rule{\linewidth}{0.5mm} \\[0.4cm]
+{ \huge \bfseries APP2: Hold’em for n00bs \\[0.4cm] }
+\rule{\linewidth}{0.5mm} \\[1.5cm]
+
+% Author and supervisor
+\noindent
+\begin{minipage}{0.4\textwidth}
+  \begin{flushleft} \large
+    \emph{Authors :}\\
+    Habib \textsc{Slim}\\
+    Eslam \textsc{Mohammed}\\
+    Archit \textsc{Yadav}\\
+    Albert \textsc{Strümpler}
+    Manuel \textsc{Treutlein}\\
+    Sofiane \textsc{Tanji}
+  \end{flushleft}
+\end{minipage}%
+\begin{minipage}{0.4\textwidth}
+  \begin{flushright} \large
+    \emph{Teacher :} \\
+    Ms.~Malin \textsc{Rau}\\
+  \end{flushright}
+\end{minipage}
+
+\vfill
+
+% Bottom of the page
+{\large Last Version \\ \today}
+
+\end{center}
+\end{titlepage}
+
+% --------------------------------------------------------------
+%                    Table des matières 
+% --------------------------------------------------------------
+
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+% --------------------------------------------------------------
+%                         Début du corps
+% --------------------------------------------------------------
+\section{Introduction and modelling}
+% Explanation of the problem and modelling.
+In this APP we have to deal with a card game played by two persons.
+One player is referred to as sister, the other player is referred to as strategist.
+A series of n cards lying on the table face up in a line. We are modelling
+the card deck through a \gls{deque}, short deque. The elements of the deque are integers
+in the range of [2, 14], whereas the value 2 represents the card 2 and the
+value 14 represents the value of an ace. All values in between are assigned
+appropriately, this means in particular for the face cards that the jack
+is modeled by 11, the queen by 12 and the king by 13.
+The deque allows according to the game rules to take only the
+rightmost or the leftmost card. The players take turns while playing the
+game and always decide to take the leftmost or rightmost card. This is
+modeled through \gls{popleft} to take leftmost card and through \gls{pop}
+to take the rightmost card. Be careful, the naming of \gls{pop} for taking
+the rightmost card can be considered not consistent with \gls{popleft}, but we
+stick to the denotation of the phyton standard library. The player with
+the highest score in the end wins. Even though we will apply different
+algorithms to solve the problem, the input and ouput of the algorithm stays the same.
+%% TODO change this section if input or ouput should be different
+The input is a list of cards represented as deque and the choice (of the sister)
+who starts the game represented as boolean. The output is 0 if the sister wins
+or the sum of the players are equal. The output is 1 if the
+player strategist wins.\\
+
+In this APP we decided to change to python code for representing algorithms.
+The reason for this is that python code has a simple structure and resembles
+pseudo-code in a way. But furthermore it allows us to represent the developed
+algorithms more detailed.\\
+
+The sister will always play the so called \gls{greedy}. Therefore we first consider an algorithm applying this method in chapter 2. Because of some limitations of the \gls{greedy} we will then consider a complete solution space exploration in chapter 3. This gives us an optimal solution, but with an unacceptable runtime. For this reason we will introduce a dynamic algorithm in chapter 4, resulting in an optimal solution with acceptable runtime.
+
+% --------------------------------------------------------------
+%                         Partie 1
+% --------------------------------------------------------------
+
+\newpage
+
+\section{The greedy algorithm}
+%% TODO complete, RESPONSIBLE PERSON: Albert
+-- Section 2 basically
+
+\subsection{Pseudocode}
+%% TODO complete, RESPONSIBLE PERSON: Sofiane
+-- write down the python pseudocode
+
+\subsection{Complexity}
+%% TODO complete, RESPONSIBLE PERSON: Sofiane
+-- short chapter about the complexity, maybe not necessary.
+
+\subsection{Limitations and advantages}
+%% TODO complete, RESPONSIBLE PERSON: Manuel
+-- maybe make a table
+
+
+% --------------------------------------------------------------
+%                         Partie 2
+% --------------------------------------------------------------
+
+\newpage
+
+\section{Complete solution space exploration}
+%% TODO complete, RESPONSIBLE PERSON: Albert
+-- Section 3 basically
+
+\subsection{Pseudocode}
+%% TODO complete, RESPONSIBLE PERSON: Habib, Jimmy
+-- write down the python pseudocode
+
+\subsection{Complexity}
+%% TODO complete, RESPONSIBLE PERSON: Achret
+-- short chapter about the complexity.
+
+%% \subsection{Discussion about possible filters.}
+%% TODO ONLY if we have time.
+%% TODO complete, RESPONSIBLE PERSON:
+%% -- short chapter about the complexity.
+
+
+% --------------------------------------------------------------
+%                         Partie 2
+% --------------------------------------------------------------
+
+\newpage
+
+
+\section{Solution with dynamic programming}
+%% TODO complete, RESPONSIBLE PERSON: Jimmy
+-- Section 4 basically
+
+
+\subsection{Pseudocode}
+%% TODO complete, RESPONSIBLE PERSON: Jimmy, Habib
+For the algorithm we make some assumptions to make the code
+easier to understand. This leads to the necessary to adapt
+the code under after assumptions. We will consider these later.
+The assumptions
+\begin{itemize}
+	\item The player strategist always starts.
+	\item There can never occur the situation that the sister chooses greedy between two cards with the same value.
+\end{itemize}
+
+-- write down the python pseudocode
+
+
+
+\subsection{Complexity}
+%% TODO complete, RESPONSIBLE PERSON: Jimmy, Habib
+-- short chapter about the complexity.
+
+\subsection{The algorithm under different assumptions}
+% TODO complete, RESPONSIBLE PERSON: Habib
+-- add the consideration of different assumptions for the dynamic programming.
+
+
+% --------------------------------------------------------------
+%                         Conclusion
+% --------------------------------------------------------------
+
+\section{Conclusion and feedback}
+
+%% TODO complete, RESPONSIBLE PERSON: Manuel
+-- Write something in general
+
+% --------------------------------------------------------------
+%                            Abstract
+% --------------------------------------------------------------
+
+\end{document}
