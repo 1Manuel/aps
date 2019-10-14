@@ -5,11 +5,16 @@
 \usepackage[a4paper, total={6.5in, 9in}]{geometry}
 
 \usepackage{multirow}
+\usepackage{comment}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{centrale}
 \usepackage{minted}
 \usepackage{enumitem}
 \usepackage[thinlines]{easytable}
+\usepackage{tikz}
+\usetikzlibrary{graphdrawing.trees}
+\usegdlibrary{trees}
+
 \usepackage{graphicx}       % provides commands for including figures
 \usepackage{csquotes}       % provides \enquote{} macro for "quotes"
 \usepackage{glossaries}     % provides glossary commands
@@ -30,7 +35,7 @@
 
 \hypersetup{
     pdftitle={APP2 Report},
-    pdfauthor={Habib Slim, Sofiane Tanji, Eslam Mohammed, Archit Yadav, Albert Strümpler, Manuel Treutlein},
+    pdfauthor={Eslam Mohammed, Habib Slim, Albert Strümpler, Sofiane Tanji, Manuel Treutlein, Archit Yadav},
     pdfsubject={Problem Solving},
     pdfproducer={},
     pdfkeywords={greedy, dynamic programming, complete solution space exploration, holdem, cards} %
@@ -40,31 +45,6 @@
 \graphicspath{ {./img/} {./eps/}} % pour ne pas avoir à ajouter eps/ton-image.jpg
 
 % ------------- Packages spéciaux, nécessaires pour ce rapport, à insérer ici ------------- 
-
-\makeglossaries
-\newglossaryentry{deque} {
-	name = double ended linked list,
-	description = {Standard data structure in algorithms. Each element in the list
-								 is linked by a pointer to the left and a pointer to the right element, exept
-								 the first and the last element. We can access the list only through a pointer
-								 on the first and last element.}
-}
-\newglossaryentry{pop} {
-	name = pop(),
-	description = {Get the last element in the deque. In terms of the card game this
-								 is the rightmost card.}
-}
-\newglossaryentry{popleft} {
-	name = popleft(),
-	description = {Get the first element in the deque. In terms of the card game this
-								 is the leftmost card.}
-}
-\newglossaryentry{greedy} {
-	name = greedy algorithm,
-	description = {The greedy algorithm is a heuristic algorithm pattern to solve
-								 problems through making optimal local choices. This might not
-								 be optimal in the global context.}
-}
 
 \begin{document}
 
@@ -91,12 +71,12 @@
 \begin{minipage}{0.4\textwidth}
   \begin{flushleft} \large
     \emph{Authors :}\\
-    Habib \textsc{Slim}\\
     Eslam \textsc{Mohammed}\\
-    Archit \textsc{Yadav}\\
+    Habib \textsc{Slim}\\
     Albert \textsc{Strümpler}\\
+    Sofiane \textsc{Tanji}\\
     Manuel \textsc{Treutlein}\\
-    Sofiane \textsc{Tanji}
+    Archit \textsc{Yadav}
   \end{flushleft}
 \end{minipage}%
 \begin{minipage}{0.4\textwidth}
@@ -124,49 +104,43 @@
 % --------------------------------------------------------------
 %                         Début du corps
 % --------------------------------------------------------------
-\section{Introduction}
+\section{Introduction} \label{sec:introduction}
 % Explanation of the problem and modelling.
 In this APP we have to deal with a card game played by two persons.
-One player is referred to as sister, the other player is referred to as strategist.
+A sequence of n cards lying on a table face up in a line. The two players take turns choosing a card from the leftmost or rightmost end. It is not allowed to take a card which is not at one of the two ends. After one player takes the last card, the game is over. The player with the higher card sum in the end wins. The figure \ref{fig:introductionExample} shows an example of a possible card game.
 
-THIS PART MUST BE MODIFIED !
---------------------------------------------------
-A series of n cards lying on the table face up in a line. We are modelling
-the card deck through a \gls{deque}, short deque. The elements of the deque are integers
-in the range of [2, 14], whereas the value 2 represents the card 2 and the
-value 14 represents the value of an ace. All values in between are assigned
-appropriately, this means in particular for the face cards that the jack
-is modeled by 11, the queen by 12 and the king by 13.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[font=\ttfamily,
+    array/.style={matrix of nodes,nodes={draw, minimum size=7mm},column sep=-\pgflinewidth, row sep=0mm, nodes in empty cells,
+    row 1/.style={nodes={draw=none, fill=none, minimum size=5mm}},
+    row 1 column 1/.style={nodes={draw}},
+    row 1 column 10/.style={nodes={draw}}}]
+    
+    \matrix[array] (array) {
+    4 & 3 & 5 & 2 & 2 & 14 & 13 & 5 & 7 & 9\\};
+    
+    \end{tikzpicture}
+    \caption{Example of a card game. Card 4 and 9 can be chosen from the current player.}
+    \label{fig:introductionExample}
+\end{figure}
 
-The deque allows according to the game rules to take only the
-rightmost or the leftmost card. The players take turns while playing the
-game and always decide to take the leftmost or rightmost card. This is
-modeled through \gls{popleft} to take leftmost card and through \gls{pop}
-to take the rightmost card. Be careful, the naming of \gls{pop} for taking
-the rightmost card can be considered not consistent with \gls{popleft}, but we
-stick to the denotation of the phyton standard library. The player with
-the highest score in the end wins. Even though we will apply different
-algorithms to solve the problem, the input and ouput of the algorithm stays the same.
-%% TODO change this section if input or ouput should be different
-The input is a list of cards represented as deque and the choice (of the sister)
-who starts the game represented as boolean. The output is 0 if the sister wins
-or the sum of the players are equal. The output is 1 if the
-player strategist wins.\\
---------------------------------------------------
-
---------> Is this necessary ?
 In this APP we decided to change to python code for representing algorithms.
-The reason for this is that python code has a simple structure and resembles
-pseudo-code in a way. But furthermore it allows us to represent the developed
-algorithms more detailed.\\
---------------------------------------------------
+The reason for this is that python code has a simple structure and resembles to
+pseudo-code in a way. Additionally, it allows us to represent the developed
+algorithms in a more detailed way.
 
-The sister will always play the so called \gls{greedy}. Therefore we first consider an algorithm applying this method in chapter 2. Because of some limitations of the \gls{greedy} we will then consider a complete solution space exploration in chapter 3. This gives us an optimal solution, but with an unacceptable runtime. For this reason we will introduce a dynamic algorithm in chapter 4, resulting in an optimal solution with acceptable runtime.
+\ezskip One player, named the sister, will always play the so called greedy strategy. Therefore we first consider an algorithm applying this method in chapter \ref{sec:greedySol}. Because of some limitations of the greedy strategy we will then consider a complete solution space exploration in chapter \ref{sec:completeSol}. This gives us an optimal solution, but with an unacceptable runtime. For this reason we will introduce a dynamic algorithm in chapter \ref{sec:dp_solution}, resulting in an optimal solution with acceptable runtime. Before we begin with the algorithms, we will introduce in chapter \ref{sec:notations} some notations. 
 
 \newpage
-\section{Notations}
+\section{Notations} \label{sec:notations}
 
-For all of what follows, we will be using the same data structure to represent the playing cards : a simple array of fixed size containing all card costs that have been drawn, unordered, named "\texttt{CARDS}".
+In the following, one player is referred to as the sister, the other player is referred to as the strategist.
+
+For all of what follows, we will be using the same data structure to represent the playing cards : a simple array of fixed size containing all card costs that have been drawn, unordered, named "\texttt{CARDS}". The elements of \texttt{CARDS} are $integers$ in the range of $[2, 14]$, whereas the value $2$ represents the card two and the value $14$ represents the value of an ace. All values in between are assigned appropriately, this means in particular for the face cards that the jack is modeled by $11$, the queen by $12$ and the king by $13$.
+
+%% TODO change this section if input or output should be different
+The input of all algorithms is a list of cards represented as array \texttt{CARDS} and the choice of the sister about who makes the first move, represented as a $boolean$.
 
 In order to visually describe a configuration of cards in a game, we will be using the following diagram notations :
 
@@ -183,7 +157,7 @@ In order to visually describe a configuration of cards in a game, we will be usi
     3 & 2 & 7 & 8 & 9 & 10&14 & 6 & 4 & 3\\};
     
     \begin{scope}[on background layer]
-    \fill[blue!10] (array-1-1.north west) rectangle (array-1-10.south east);
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-10.south east);
     \end{scope}
     
     \draw (array-1-1.north)--++(90:3mm) node [above] (first) {\textbf{i}};
@@ -196,11 +170,11 @@ In order to visually describe a configuration of cards in a game, we will be usi
     \label{fig:example_diag_01}
 \end{figure}
 
-More generally, a configuration $(i,j)$ describing a situation produced from a set of $n$ cards is such that :
+More generally, a configuration $(i,j)$ describing a situation produced from a set of $n$ cards is such that:
 
 $$ (i,j) \in [\![0,\ n-1]\!]^2, \ i \leq j $$
 
-If $i$ is equal to $j$, we are describing a configuration in which a single card of index $i$ and of cost \texttt{CARDS[j]} is remaining.
+If $i$ is equal to $j$, we are describing a configuration in which a single card of index $i$ ($= j$) and of cost \texttt{CARDS[i]} (\texttt{= CARDS[j]}) is remaining.
 
 \medskip
 
@@ -219,7 +193,7 @@ Referring to the subconfiguration $(i+1,\ j)$ thus describes a subsequent config
     3 & 2 & 7 & 8 & 9 & 10&14 & 6 & 4 & 3\\};
     
     \begin{scope}[on background layer]
-    \fill[blue!10] (array-1-1.north west) rectangle (array-1-10.south east);
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-10.south east);
     \fill[gray!80] (array-2-1.north west) rectangle (array-2-1.south east);
     \end{scope}
     
@@ -235,57 +209,295 @@ The card of index 0 and of cost 3 has been greyed out, which means that it was s
 
 \medskip
 
-In general, referring to the subconfiguration $(i+n,\ j-k)$ describes a configuration in which $n$ cards have been picked on the left-side of the stack, and $k$ cards have been picked on the right side. The constraint $i+n \leq j-k$ must obviously still be correct for the configuration to be valid.
+In general, referring to the subconfiguration $(i+n,\ j-k)$ describes a configuration in which $n$ cards have been picked on the left-side of the stack, and $k$ cards have been picked on the right side. Obviously, the constraint $i+n \leq j-k$ must be correct for the configuration to be valid.
 
 % --------------------------------------------------------------
-%                         Partie 1
+%                         Part 1
 % --------------------------------------------------------------
 
 \newpage
 
-\section{The greedy algorithm}
-%% TODO complete, RESPONSIBLE PERSON: Albert
--- Section 2 basically
+\section{The greedy algorithm} \label{sec:greedySol}
+As presented in the introduction, the first algorithm we studied was the greedy algorithm, it is the method that the sister always uses when she plays the game. In the first part, the strategist player also plays greedy to understand the concept and also to see the algorithm evolution through this APP development.
+
+\ezskip The greedy algorithm consists in choosing the local optimal choice at each step. It is a naive approach that is preferring what looks like the better choice but may not be globally because of the missing information that isn't considered. In our case the algorithm always picks the biggest card from the two possibilities without considering the other cards.
+
+\ezskip The tree in figure \ref{fig:greedy_01} shows the possibilities for a greedy player trying to pick the best score out of the card deck against another greedy player notated $">"$. As we can see the greedy player always picks the biggest card, but didn't get the best possible result at the end and didn't win.
+
+\begin{figure}[H]
+    \centering   
+    \begin{tikzpicture}[font=\ttfamily,
+    array/.style={matrix of nodes,nodes={draw, minimum size=7mm},column sep=-\pgflinewidth, row sep=0mm, nodes in empty cells,
+    row 1/.style={nodes={draw=none, fill=none, minimum size=5mm}}}]
+
+    \matrix[array] (array) {
+    0 & 1 & 2 & 3 & 4 & 5\\
+    14& 13& 5 &12 & 2 & 4\\};
+
+    \begin{scope}[on background layer]
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-6.south east);
+    \end{scope}
+    \end{tikzpicture}
+
+    \begin{tikzpicture}[nodes={draw, circle}, ->]
+        \node {Start}
+        child { node [fill=CentraleRed!60] {14 \tiny{>13}} 
+            child{ node [fill=CentraleRed!60] {5 \tiny{>12}} 
+                child{ node [fill=CentraleRed!60] {4  \tiny{>2}}}
+                child{ node {2 \tiny{>4}}}
+            }
+            child [missing]
+            child{ node [fill=yellow!50!red] {4 \tiny{>5}} 
+                child{node [fill=yellow!50!red] {12 \tiny{>2}}}
+                child{node {2 \tiny{>12}}}
+            }
+        }
+        child [missing]
+        child [missing]
+        child [missing]
+        child { node [fill=yellow] {4 \tiny{>14}} 
+            child{ node [fill=yellow] {13 \tiny{>5}} 
+                child{node [fill=yellow] {12 \tiny{>2}}}
+                child{node {2 \tiny{>12}}}
+            }
+            child [missing]
+            child{ node {2 \tiny{>13}} 
+                child{node {12 \tiny{>5}}}
+                child{node {5 \tiny{>12}}}
+            }
+        };
+    \end{tikzpicture}
+    \caption{Greedy Choices (green), Best Solution (orange), Better than greedy (yellow)}
+    \label{fig:greedy_01}
+\end{figure}
+
+\newpage
 
 \subsection{Pseudocode}
-%% TODO complete, RESPONSIBLE PERSON: Sofiane
--- write down the python pseudocode
+Depending on whether the sister starts or not (meaning if the boolean \texttt{sisterFirst} is equal to \texttt{True} or \texttt{False}), \texttt{getScores} computes the resulting scores of the player and the sister when both are playing greedy.
+\begin{minted}[frame=leftline]{Python}
+def getScores(sisterFirst):
+    sum_sister, my_sum = 0, 0
+    i, j = 0, len(CARDS) - 1
+    if sisterFirst:
+        while i <= j:
+            # Sister's turn
+            if CARDS[i] > CARDS[j]:
+                sum_sister += CARDS[i]
+                i += 1
+            else:
+                sum_sister += CARDS[j]
+                j -= 1
+            # Brother's turn
+            if CARDS[i] > CARDS[j]:
+                my_sum += CARDS[i]
+                i += 1
+            else:
+                my_sum += CARDS[j]
+                j -= 1
+    else:
+        while i <= j:
+            # Brother's turn
+            if CARDS[i] > CARDS[j]:
+                my_sum += CARDS[i]
+                i += 1
+            else:
+                my_sum += CARDS[j]
+                j -= 1
 
-\subsection{Complexity}
-%% TODO complete, RESPONSIBLE PERSON: Sofiane
--- short chapter about the complexity, maybe not necessary.
+            # Sister's turn
+            if CARDS[i] > CARDS[j]:
+                sum_sister += CARDS[i]
+                i += 1
+            else:
+                sum_sister += CARDS[j]
+                j -= 1
+    return my_sum, sum_sister
+\end{minted}
 
-\subsection{Limitations and advantages}
+\subsection{Complexity, limitations and advantages}
 %% TODO complete, RESPONSIBLE PERSON: Manuel
--- maybe make a table
+Most greedy algorithms have several characteristics in common. 
+Our greedy algorithm for solving the considered problem is no exception. 
+As a quick overview, consider the table \ref{tab:greedyAdLi}. 
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c}
+        \textbf{Advantages} & \textbf{Limitations} \\
+        good runtime & not optimal \\
+        no extra space & \\
+        quick to implement & \\
+        easy to understand & \\
+    \end{tabular}
+    \caption{Advantages and limitations of the greedy algorithm}
+    \label{tab:greedyAdLi}
+\end{table}{}
 
+As shown in table \ref{tab:greedyAdLi}, the list of advantages of a greedy approach is quite appealing. The most important reason for using greedy algorithms is the good run time. Because a greedy algorithm decides locally and without adaptation later on, decisions are made fast. In our case this means a greater or smaller comparison between two integer values for one decision step. The decision is made for all $n$ cards. Because the comparison is a constant operation, we can conclude that the greedy algorithm is in $O(n)$. The worst and best case do not differ and are therefore in $O(n)$ as well. 
+
+\ezskip Another advantage is that we do not have to store anything, except of the array \texttt{CARDS} itself. The implementation is done very quickly, in particular we do not need any special data structures or complex algorithms. The idea of the algorithm is intuitively and therefore easy to understand.\\
+So why isn't it possible to stick to this smart solution? The answer is the non optimal solution finding in the global context. Optimal local decisions don't necessarily lead to optimal global solutions. Furthermore, we can think of examples where the greedy algorithm leads into something we could consider a dead end. 
+% TODO dead end example 
+
+For this reason we have to look at different approaches in the following chapters. 
 
 % --------------------------------------------------------------
-%                         Partie 2
+%                         Part 2
 % --------------------------------------------------------------
 
 \newpage
 
-\section{Complete solution space exploration}
+\section{Complete solution space exploration} \label{sec:completeSol}
 %% TODO complete, RESPONSIBLE PERSON: Albert
-To find a complete solution space exploration
+The aim of the complete solution space exploration is to find every
+possible solution for our problem. Therefore we ensure that we find
+an optimal solution for our problem. 
+
+You can compare our solution in the following pseudocode with the figure \ref{fig:CSS_01}. We have to find every possible branch for the solution. Don't forget that this may not be the solution of the greedy algorithm as seen in figure \ref{fig:greedy_01}. 
+
+
+\begin{figure}[H]
+    \centering   
+    \begin{tikzpicture}[font=\ttfamily,
+    array/.style={matrix of nodes,nodes={draw, minimum size=7mm},column sep=-\pgflinewidth, row sep=0mm, nodes in empty cells,
+    row 1/.style={nodes={draw=none, fill=none, minimum size=5mm}}}]
+
+    \matrix[array] (array) {
+    0 & 1 & 2 & 3 & 4 & 5\\
+    14& 6 & 9 & 2 & 12& 3\\};
+
+    \begin{scope}[on background layer]
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-6.south east);
+    \end{scope}
+    \end{tikzpicture}
+
+
+    \begin{tikzpicture}[nodes={draw, circle}, ->]
+        \node {Start}
+        child { node [fill=CentraleRed!60] {14 \tiny{>6}} 
+            child{ node [fill=CentraleRed!60] {9 \tiny{>3}} 
+                child{ node {2  \tiny{>12}}}
+                child{ node [fill=CentraleRed!60] {12 \tiny{>2}}}
+            }
+            child [missing]
+            child{ node {3 \tiny{>12}} 
+                child{node {9 \tiny{>2}}}
+                child{node {2 \tiny{>9}}}
+            }
+        }
+        child [missing]
+        child [missing]
+        child [missing]
+        child { node {3 \tiny{>14}} 
+            child{ node {6 \tiny{>12}} 
+                child{node {9 \tiny{>2}}}
+                child{node {2 \tiny{>9}}}
+            }
+            child [missing]
+            child{ node {12 \tiny{>6}} 
+                child{node {9 \tiny{>2}}}
+                child{node {2 \tiny{>9}}}
+            }
+        };
+    \end{tikzpicture}
+    \caption{Strategist's best solution (Index values are the sister's picks)}
+    \label{fig:CSS_01}
+\end{figure}
+
+\newpage
 
 \subsection{Pseudocode}
 %% TODO complete, RESPONSIBLE PERSON: Habib, Jimmy
--- write down the python pseudocode
+We explained that for doing the complete solution space exploration we have to find all possible branches in the corresponding tree. This leads to an algorithm draft where we construct this tree and compute the sum of all branches. Logically, the branch with the highest sum represents the best solution. Nonetheless we decided to use another version in which we don't have to store the whole tree, but compare the best solution 'on the fly'. For this purpose we define a binary number which represents a possible solution strategy for the cards game.
+
+\ezskip The strategist player has to do $LEN\_CARDS/2$ number of choices. Therefore the number for the solution strategy consists of $LEN\_CARDS/2$ bits. A bit 0 indicates to take the leftmost card, a 1 indicates to take the rightmost card. The strategy is 'incremented' with 1 for every while loop, which means that all the strategies are tested one after another. We stop if we reached the strategy only containing ones. The pseudocode is separated in two functions. The application of the current solution strategy is outsourced.
+
+\ezskip The \texttt{applySolution} function returns the sum for the strategist with regards to the \texttt{solutionStrategy}. We update the best value respectively the best strategy if the return of a new \texttt{solutionStrategy} is better than our current best solution. After we finished going through all possible solutions we can return the best solution. 
+
+\begin{minted}[frame=leftline]{Python}
+def completeSolutionSpaceExploration(CARDS, sisterFirst):
+    # Define the solutionStrategy in a binary format.
+    # If the value is 0, the player should choose the leftmost
+    # card, 1 for the rightmost card.
+    solutionStrategy = 0b0
+    # We reach the last solutionStrategy if the solutionStrategy
+    # only consists of one. For a player are LEN_CARDS/2 choices
+    # in one game because there are two players for LEN_CARDS number
+    # of cards. This leads to exponential choices. With bin() we convert
+    # the decimal value into a binary.
+    if sisterFirst 
+        numberOfChoices = floor(LEN_CARDS / 2)
+    else 
+        numberOfChoices = ceil(LEN_CARDS / 2)
+    lastSolutionStrategy = bin(pow(2, numberOfChoices))
+
+    # Store the best solutions here.
+    bestSolutionValue = 0
+    bestSolutionStrategy = 0b0
+
+    while solutionStrategy is not lastSolutionStrategy :
+        newSolutionValue = applySolution(sisterFirst, solutionStrategy)
+        if newSolutionValue > bestSolutionValue :
+            bestSolutionValue = newSolutionValue
+            bestSolutionStrategy = solutionStrategy
+        solutionStrategy++
+
+    return (bestSolutionStrategy, bestSolutionValue)
+
+def applySolution(sisterFirst, solutionStrategy)
+    # Save the current round. One round is one card choice
+    # of the sister and one of the strategist.
+    currentRound = 1
+    # sum up the result for the strategist.
+    sum = 0
+    i = 0
+    j = LEN_CARDS - 1
+
+    while i != j
+        if (sisterFirst):
+            # Sister takes the local optimum
+            if (CARDS[i] > CARDS[j]):
+                i++
+            else:
+                j -= 1
+        else:
+            # Here we apply the solutionStrategy, the strategist
+            # follows the solutionStrategy.
+            # We choose the card depending on the bit in the 
+            # solution strategy. We get the correct bit with 
+            # the bitAtPos() function with the informal signature:
+            # bitAtPos() : position --> binary number --> bit at position
+            if bitAtPos(currentRound, solutionStrategy) == 0:
+                sum = CARDS[i]
+                i++
+            else:
+                sum = CARDS[j]
+                j -= 1
+        sisterFirst = not sisterFirst
+        currentRound++
+
+    return sum
+\end{minted}
+
 
 \subsection{Complexity}
-%% TODO complete, RESPONSIBLE PERSON: Achret
--- short chapter about the complexity.
+%% TODO complete, RESPONSIBLE PERSON: Archit
+We have seen that in this game either the sister, or the strategist starts the game. It is already known that the sister will always pick the highest valued card, that's why the number of possible games will always be less when the sister starts, since she would always start with the same highest card, thereby restricting the number of possible moves. Whereas in the strategist's case, we could start with either of the card since we are trying to play strategically. Therefore we can move forward with the idea that for complexity analysis part, the derivation of the space/time complexity is only necessary for the worst case. Hence, in the complexity part we will only look at the cases in which the strategist starts, since there are more possible play combinations.
 
-%% \subsection{Discussion about possible filters.}
-%% TODO ONLY if we have time.
-%% TODO complete, RESPONSIBLE PERSON:
-%% -- short chapter about the complexity.
+\ezskip
+Let $n$ be the total number of cards.
 
+The idea is that in this game, half of the cards \(\frac{n}{2}\) will go to the strategist, and half of the cards will go to the sister. If $n$ is odd numbered, the strategist will get one card extra ( \(\frac{n}{2}\) + 1 ), since the strategist is starting the game.
+
+Since at a time we have two possible options only, we can write the number of possible games as \(2^{\frac{n}{2}} \). This is the case for the strategist starting only. When sister starts, she would be the limiting case and restrict the number of cards to half the number of cases, or in best case be equal to \(2^{\frac{n}{2}} \). In order to accommodate for the worst case, we’ll take the later case.
+Therefore, the total number of cases is $2 * (2^{\frac{n}{2}})$. In terms of big-O notation, we can write : $
+\mathcal{O}(2 * 2^{\frac{n}{2}} )  
+ = \mathcal{O}( 2^{\frac{n}{2} + 1} )
+ \approx \mathcal{O}( 2^{n} )
+$ : time complexity is exponential.
 
 % --------------------------------------------------------------
-%                         Partie 2
+%                         Part 3
 % --------------------------------------------------------------
 
 \newpage
@@ -293,15 +505,14 @@ To find a complete solution space exploration
 
 \section{Dynamic Programming solution} \label{sec:dp_solution}
 %% TODO complete, RESPONSIBLE PERSON: Jimmy, Habib
-The dynamic programing technique is used primarily for optimization problems, where we wish to find the best way of doing something which often the way of doing that something is exponential.
--- "which often the way of doing that something is exponential" => weird sentence maybe ?
+The dynamic programming techniques are primarily used for problem optimization when attempting to reduce the usually exponential complexity into a polynomial one.
 
-Our problem solving process should involve three components:
+Our problem solving process involves three components:
 %% STYLE: put these points in itemized bold way
 \begin{itemize}
     \item \textbf{Simple Subproblems}: We must find a way of breaking the global problem into subproblems, each having the same structure to the global problem.
-    \item \textbf{Subproblem Optimality}: In order to find the global optimum solution, an optimal solution for each subproblem should be composed.
-    \item \textbf{Subproblem Overlapping}: Optimal solutions to unrelated subproblems can contain subproblems in common. Indeed, such overlap allows us to improve the efficiency of a dynamic programming algorithm by storing solutions to subproblems. This last property is particularly important for dynamic programming algorithms, because it allows them to take advantage of memoization, which is an optimization that allows us to avoid repeated recursive calls by storing intermediate values.
+    \item \textbf{Subproblem Optimality}: In order to find the global optimum solution, an optimal solution for each subproblem was composed.
+    \item \textbf{Subproblem Overlapping}: Optimal solutions to unrelated subproblems can contain common subproblems. Indeed, such overlap allows us to improve the efficiency of a dynamic programming algorithm by storing solutions to subproblems. This last property is particularly important for dynamic programming algorithms, because it allows them to take advantage of memoization, which is an optimization that allows us to avoid repeated recursive calls.
 \end{itemize}
 
 %% BONUS: add the proof for DP here
@@ -309,15 +520,17 @@ Our problem solving process should involve three components:
 To make the problem easier, we make some assumptions about the behavior of players in some undefined situations :
 
 \begin{itemize}
-    \item If the sister player has to choose between two cards of equal cost, she always picks the right-most card
-    \item If the strategist player has to choose between two cards that yield equal potential scores, he picks the right-most card as well \footnote{\ As shown later on, this assumption has no impact on accurately predicting win or loss.}
+    \item If the player sister has to choose between two cards of equal cost, she always picks the right-most card
+    \item If the player strategist has to choose between two cards that yield equal potential scores, he picks the right-most card as well \footnote{\ As shown later on, this assumption has no impact on accurately predicting win or loss.}
 \end{itemize}
 
-In the last part \ref{sub:extensions} we attempt to produce a more general version of our dynamic programming approach, getting rid of unnecessary assumptions.
+In the last part \ref{susub:memoization}, we attempt to produce a more general version of our dynamic programming approach, getting rid of unnecessary assumptions.
 
 \subsection{First recursive solution}
 
-To begin to solve the problem, we suggest a first solution that does not make use of dynamic programming techniques such as memoization and tabulation. It is a recursive method that finds the optimal solution for the strategist player, under the assumptions mentioned in the introduction of section \ref{sec:dp_solution}.
+To begin the problem solving, we suggest a first solution that does not use dynamic programming techniques such as memoization and tabulation. It is a recursive method that finds the optimal solution for the strategist player, under the assumptions mentioned in the introduction of section \ref{sec:dp_solution}.
+
+\newpage
 
 \subsubsection{Subproblem decomposition} \label{sub:subproblems}
 \ezskip
@@ -336,7 +549,7 @@ To introduce this solution, let us consider the simple configuration described i
     3 \\};
     
     \begin{scope}[on background layer]
-    \fill[blue!10] (array-1-1.north west) rectangle (array-1-1.south east);
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-1.south east);
     \end{scope}
     
     \draw (array-1-1.north)--++(90:3mm) node [above] (first) {\textbf{i=j}};
@@ -347,7 +560,7 @@ To introduce this solution, let us consider the simple configuration described i
 \end{figure}
 
 Let $rem_0$, $rem_1$ be the remaining points that the first player, second player (respectively) are yet to earn in the subsequent configurations.
-After this configuration is played (no matter which of the sister or the strategist is playing), the resulting scores will be \texttt{firstScore = 3 + $rem_0$} and \texttt{secondScore = 0 + $rem_1$}.
+After this configuration is played (no matter which of the player, sister or the strategist is playing), the resulting scores will be \texttt{firstScore = 3 + $rem_0$} and \texttt{secondScore = 0 + $rem_1$}.
 
 However, since all cards have been picked, we have $rem_0 = rem_1 = 0$ and the game ends. This simple observation can be extended in a configuration with two playing cards, like shown in figure \ref{fig:recursive_02} :
 
@@ -365,7 +578,7 @@ However, since all cards have been picked, we have $rem_0 = rem_1 = 0$ and the g
     3 & 4\\};
     
     \begin{scope}[on background layer]
-    \fill[blue!10] (array-1-1.north west) rectangle (array-1-2.south east);
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-2.south east);
     \end{scope}
 
     \draw (array-1-1.north)--++(90:3mm) node [above] (first) {\textbf{i}};
@@ -376,12 +589,11 @@ However, since all cards have been picked, we have $rem_0 = rem_1 = 0$ and the g
     \label{fig:recursive_02}
 \end{figure}
 
-Again, the resulting scores after this configuration will be \texttt{firstScore = 4}\ and \texttt{secondScore = 3}, no matter who the first player is.
-We have \texttt{firstScore = 3 + rem\_0} and \texttt{secondScore = rem\_1}. Here however, the subsequent configuration is not empty, and is the configuration $(0,0)$ described in \ref{fig:recursive_01}.
+If the first player in this configuration picks the right-most card, we have \texttt{firstScore = 4 + $rem_0$} and \texttt{secondScore = $rem_1$}. Here however, a subsequent configuration exists, which is the configuration $(0,0)$ described in figure \ref{fig:recursive_01}.
 The second player in configuration $(0,1)$ becomes the first player in subconfiguration $(0,0)$, and we then have :
 
-$$firstScore_{(0,1)} = CARDS[1] + rem_0 = CARDS[1] + secondScore{(0,0)} = 4 + 0 = 4$$
-$$secondScore_{(0,1)} = rem_1 = firstScore{(0,0)} = CARDS[0] = 3$$
+$$firstScore_{(0,1)} = CARDS[1] + rem_0 = CARDS[1] + secondScore_{(0,0)} = 4 + 0 = 4$$
+$$secondScore_{(0,1)} = rem_1 = firstScore_{(0,0)} = CARDS[0] = 3$$
 
 \newpage
 Now, if we extend again our configuration with two more cards, we get :
@@ -400,7 +612,7 @@ Now, if we extend again our configuration with two more cards, we get :
     3 & 5 & 14 & 4\\};
     
     \begin{scope}[on background layer]
-    \fill[blue!10] (array-1-1.north west) rectangle (array-1-4.south east);
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-4.south east);
     \end{scope}
 
     \draw (array-1-1.north)--++(90:3mm) node [above] (first) {\textbf{i}};
@@ -437,7 +649,7 @@ However, for the next configuration we have :
     3 & 5 & 14 & 4\\};
     
     \begin{scope}[on background layer]
-    \fill[blue!10] (array-1-1.north west) rectangle (array-1-4.south east);
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-4.south east);
     \fill[gray!80] (array-2-1.north west) rectangle (array-2-1.south east);
     \end{scope}
 
@@ -535,9 +747,8 @@ And returns a tuple :
 
 $$getScore(i, j, sisterFirst) = (firstScore,\ secondScore)$$
 
-\noindent \texttt{(firstScore, secondScore)} being the total score of the first and second players for the configuration $(i,j)$ if the sister start first or not, \textbf{in the optimal case for the strategist}.
-This means that if \texttt{sisterFirst = true}, \texttt{firstScore} is the sister's score and vice-versa.
-Thus \texttt{firstScore} > \texttt{secondScore} means that the sister won for configuration $(i,j)$.
+\noindent \texttt{(firstScore, secondScore)} being the total score of the first and second players respectively for the configuration $(i,j)$ if the sister start first or not, \textbf{in the optimal case for the strategist}.
+This means that if \texttt{sisterFirst = true}, \texttt{firstScore} is the sister's score, and \texttt{firstScore} > \texttt{secondScore} means that the sister won for configuration $(i,j)$.
 
 We then implement the recursive formulas defined in section \ref{susub:recursive_formula} :
 
@@ -569,7 +780,10 @@ def getScores(i, j, sisterFirst):
     return (firstScore, secondScore)
 \end{minted}
 
-As an example, we will re-use the following configuration :
+The fact that the first player becomes the second player in the next round is implemented by flipping the boolean "\texttt{sisterFirst}" in the recursive calls to \texttt{getScores}.
+
+\ezskip
+To give a practical example for this function, we will re-use the following configuration :
 
 \begin{figure}[H]
     \centering
@@ -585,7 +799,7 @@ As an example, we will re-use the following configuration :
     3 & 5 & 14 & 4\\};
     
     \begin{scope}[on background layer]
-    \fill[blue!10] (array-1-1.north west) rectangle (array-1-4.south east);
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-4.south east);
     \end{scope}
 
     \draw (array-1-1.north)--++(90:3mm) node [above] (first) {\textbf{i}};
@@ -612,15 +826,87 @@ scores = getScores(0, LEN_CARDS - 1, True)  # => expected : (9, 17)
 
 Which are indeed the predicted results for this example (the strategist always wins with a score of 17).
 
-\subsubsection{Complexity}
-%% TODO : Write complexity analysis for the first recursive version with a nice diagram : ??
+\newpage
 
--- EASY - Can be directly taken from the course material
+\subsubsection{Complexity}
+As an illustration, we will reuse this following simple configuration to illustrate a function call tree :
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[font=\ttfamily,
+    array/.style={matrix of nodes,nodes={draw, minimum size=7mm},column sep=-\pgflinewidth, row sep=0mm, nodes in empty cells,
+    row 1/.style={nodes={draw=none, fill=none, minimum size=5mm}}
+    , row 1 column 1/.style={nodes={draw}}
+    , row 1 column 4/.style={nodes={draw}}
+    }]
+    
+    \matrix[array] (array) {
+    0 & 1 & 2  & 3\\
+    3 & 5 & 14 & 4\\};
+    
+    \begin{scope}[on background layer]
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-4.south east);
+    \end{scope}
+
+    \draw (array-1-1.north)--++(90:3mm) node [above] (first) {\textbf{i}};
+    \draw (array-1-4.north)--++(90:2.5mm) node [above] (first) {\textbf{j}};
+    %
+    \end{tikzpicture}
+    \caption{Configuration $(0,3)$}
+    \label{fig:recursive_cnfg}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    
+    \begin{tikzpicture}[nodes={}, ->]
+        \node {\footnotesize{\texttt{g(0,3,t)}}}
+        child { node  {\footnotesize{\texttt{g(1,3,f)}}} 
+            child{ node  {\footnotesize{\texttt{g(2,3,t)}}} 
+                child{ node {\footnotesize{\texttt{g(3,3,f)}}}}
+                child{ node {\footnotesize{\texttt{g(2,2,f)}}}}
+            }
+            child [missing]
+            child [missing]
+            child{ node {\footnotesize{\texttt{g(1,2,t)}}} 
+                child{ node {\footnotesize{\texttt{g(2,2,f)}}}}
+                child{ node {\footnotesize{\texttt{g(1,1,f)}}}}
+            }
+        }
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child { node {\footnotesize{\texttt{g(0,2,f)}}} 
+            child{ node {\footnotesize{\texttt{g(1,2,t)}}} 
+                child{node {\footnotesize{\texttt{g(1,1,f)}}}}
+                child{node {\footnotesize{\texttt{g(1,1,f)}}}}
+            }
+            child [missing]
+            child [missing]
+            child{ node {\footnotesize{\texttt{g(0,1,t)}}} 
+                child{node {\footnotesize{\texttt{g(1,1,f)}}}}
+                child{node {\footnotesize{\texttt{g(0,0,f)}}}}
+            }
+        };
+    \end{tikzpicture}
+    \caption{Recursion call tree, g is function getScores, t is true, f is false}
+    \label{fig:recursive_cnfg_02}
+\end{figure}
+
+In the above figure, given a 4-card deck, it yields 15 configurations because for every turn of player we have 2 choices until only a card is remaining. Hence, given a n-card deck we can say that the complexity is in 
+$O(2^n-2) \approx O(2^n)$ which is exponential. Recursion yields an exponential time caused by the recursive calls.
+
+\ezskip
+However, if we look through the above diagram we can find that the deeper recursive calls recompute a lot of values (e.g. \texttt{g(1,2,t)} is computed twice from both \texttt{g(1,3,f)} and \texttt{g(0,2,f)}) from primitive calls.
+%% not sure if I should include the repetition from this above diagram or not.
 
 \newpage
 \subsection{Memoization and Tabulation}
 %% TODO complete, RESPONSIBLE PERSON: Jimmy, Habib
--- WRITE A NICE INTRO (memoization is "optimized recursive version" and tabulation is "sequential version"
+%%-- WRITE A NICE INTRO (memoization is "optimized recursive version" and tabulation is "sequential version"
+ To address such overhead from reptitive recursive calls, dynamic programming makes use of the subproblem decomposition by reusing them without recalculation. It uses either Memoization or Tabulation. Memoization is recursive like the aforementioned technique but more optimized such that it starts from the final(addressed) state through the states that computes the target in a top-down fashion. In contrary, Tabulation follows a bottom-up fashion by addressing iteratively(not recursively) the base case that gives our targeted configuration. Both techniques are widely used but it depends on the nature of the subproblem addressed. 
 
 \subsubsection{Memoization} \label{susub:memoization}
 
@@ -702,7 +988,7 @@ As an illustration, in table \ref{tab:memoization_02} below is an example of the
     14& 6 & 9 & 7 & 3 & 11& 13& 5 & 7 & 2\\};
 
     \begin{scope}[on background layer]
-    \fill[blue!10] (array-1-1.north west) rectangle (array-1-10.south east);
+    \fill[CentraleRed!20] (array-1-1.north west) rectangle (array-1-10.south east);
     \end{scope}
 
     \draw (array-1-1.north)--++(90:3mm) node [above] (first) {\textbf{i}};
@@ -736,17 +1022,17 @@ As expected, on the diagonal we have entries of the form \texttt{(CARDS[i], 0)}.
 Trying to use a data structure that would not leave half of the table uninitialized is not relevant towards space complexity, because it would still be in $O(n^2)$.
 
 \ezskip
-As aforementioned, some entries in the memoization cache don't have to be computed because of the sister's greedy strategy.
+As aforementioned, some entries in the memoization cache don't have to be computed because of the sister's greedy strategy : this is one of the advantages of the top-down approach, as we only need to solve subproblems that are definitely required to obtain the final solution.
 
 \subsubsection{Memoization solution complexity}
 %% TODO complete, RESPONSIBLE PERSON: Jimmy, Habib
 
--- EASY : Can be directly taken from the course material
+In general, you can bound the runtime of memoized functions by bounding the number of subproblems and multiplying by the maximum amount of non-recursive work performed for a subproblem. In some cases this won’t be the tightest bound, but here all of the subproblems (which is $O(n^2)$) perform the same amount of non-recursive work which is $O(1)$ for accessing the cache which ends up having a $O(n^2)$ complexity.
 
 \subsubsection{Tabulation}
 
 Our current complexity is improving, however we would like to optimize our function a bit more by getting rid of recursion overhead.
-We start by making a dependency graph of our cache entries. In gray are the entries for the configurations in which the starting player for the global configuration (the upper-right one in the diagram) is the one to pick a card, and in grey are the ones in which the second player becomes the first to make a move.
+We start by making a dependency graph of our cache entries. In gray are the entries for the configurations in which the starting player for the global configuration (the upper-right one in the diagram) is the one to pick a card, and in black are the ones in which the second player becomes the first to make a move.
 
 \begin{figure}[H]
     \centering
@@ -759,7 +1045,9 @@ We start by making a dependency graph of our cache entries. In gray are the entr
 \textbf{Remark :} In a top-down approach, like the one presented in section \ref{susub:memoization}, computing all entries is not mandatory because the sister always picks the local optimum. Some entries of the cache for some subconfigurations will never have to be computed to get an optimal answer, like shown in table \ref{tab:memoization_02}. However, in a bottom-up approach, we will have to compute all entries to get the scores of the final configuration.
 
 \medskip
-This does not change the algorithmic complexity which will still be in $O(n^2)$, however it could potentially affect run time. It is a trade-off between getting rid of the recursion overhead and dramatically reducing space complexity (which will be in $O(n)$ for the bottom-up approach), and computing some unnecessary configurations.
+This does not change the algorithmic complexity which will still be in $O(n^2)$, however it could potentially affect run time. It is a trade-off between getting rid of the recursion overhead and dramatically reducing space complexity (which will be in $O(n)$ for the optimized bottom-up approach), and computing some unnecessary configurations.
+
+\newpage
 
 \ezskip
 To get this bottom-up solution to work, we consider the bottom diagonal and move all the way up to the global configuration.
@@ -769,7 +1057,7 @@ The first diagonal is initialized easily, with :
 cache[i][i] = (CARDS[i], 0), \ i \in [\![0,\ n-1]\!] 
 \end{equation}
 
-We then move up, computing the next stage using the recurrence formula (as described in \ref{fig:tabulation_02}). To know whether or not each diagonal corresponds to the first or second player (gray and black colors in the diagram), we just compute the modulo of the $j$ index of the current diagonal :
+We then move up, computing the next stage using the recurrence formula, as described in figure \ref{fig:tabulation_02}. To know whether or not each diagonal corresponds to the first player or the second player picking a card (gray and black colors in the diagram), we just compute the following modulo of the $j$ index of the current diagonal :
 
 \begin{equation}
 (j + n) \equiv_{2} 1 \implies sisterFirst_{diag_j} = sisterFirst_{(0,\ n-1)}
@@ -865,31 +1153,119 @@ This new version of the function returns exactly the same optimal scores and int
 \label{tab:tabulation_03}
 \end{table}
 
+\newpage
 This solution can be further down optimized in memory to $O(n)$ space complexity by storing only two subsequent diagonals at a time.
-Below is the implementation corresponding to this improvement :
+In figure \ref{fig:tabulation_04} is an illustration of the two diagonals that will be kept in memory at some given point of our iterative process.
 
--- EASY : Just an easy extension of the previous implementation
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{tabulation_04.png}
+
+    \caption{Graph dependency with the two diagonals highlighted}
+    \label{fig:tabulation_04}
+\end{figure}
+
+Let \texttt{$diag_0$} and \texttt{$diag_1$} be the two arrays of size \texttt{LEN\_CARDS} (or $n$) storing the values highlighted in the figure.
+Since \texttt{$diag_1$} is one entry smaller than \texttt{$diag_2$}, we only need to compute $n - 1$ values. In general, for a diagonal of index $j$ we must compute $n - j$ values.
+
+\ezskip
+To obtain \texttt{$diag_j[k]$}, we then need to know the values of $diag_{j-1}[k]$ and $diag_{j-1}[k+1]$. In practice, $diag_{j-1}[k]$ will be $cache[i][j-1]$, and $diag_{j-1}[k+1]$ will be $cache[i+1][j]$.
+
+\ezskip
+We will then only need to use two arrays of fixed size n to compute the final result, which knocks down our space complexity to $O(2n) = O(n)$.
+
+\medskip
+Below is the implementation corresponding to this improvement (function \texttt{isSisterFirst} is as defined earlier) :
+
+\begin{minted}[frame=leftline]{Python}
+diags = [[0]*LEN_CARDS for _ in range(2)]
+
+def updateCell(coord, k, sisterFirst, diag_i):
+    i,j = coord
+    print (k, diag_i)
+    if (sisterFirst):
+        # Sister takes the local optimum
+        if (CARDS[i] > CARDS[j]):
+            firstScore  = CARDS[i] + diags[diag_i][k+1][1]
+            secondScore = diags[diag_i][k+1][0]
+        else:
+            firstScore  = CARDS[j] + diags[diag_i][k][1]
+            secondScore = diags[diag_i][k][0]
+    else:
+        # Strategist takes the global optimum
+        if (CARDS[i] + diags[diag_i][k+1][1] > CARDS[j] + diags[diag_i][k][1]):
+            firstScore = CARDS[i] + diags[diag_i][k+1][1]
+            secondScore = diags[diag_i][k+1][0]
+        else:
+            firstScore = CARDS[j] + diags[diag_i][k][1]
+            secondScore = diags[diag_i][j-1][0]
+
+    diags[1-diag_i][k] = (firstScore, secondScore)
+
+def getScores(i, j, sisterFirst):
+    if (i==j): return (CARDS[i], 0)
+
+    # Initializing the first diagonal
+    for k in range(LEN_CARDS):
+        diags[0][k] = (CARDS[k], 0)
+
+    # Computing cache values, starting from the diagonal
+    diag_i = 0
+    for diag_index in range(1, LEN_CARDS):
+        sisterFirstDiag = isSisterFirst(diag_index, sisterFirst)
+
+        # Updating all cells in the diagonal
+        it_coord = [0, diag_index]
+        for k in range(LEN_CARDS - diag_index):
+            updateCell(it_coord, k, sisterFirstDiag, diag_i)
+            it_coord = [x+1 for x in it_coord]
+
+        # Flipping the cache entry to use for next diagonal
+        diag_i = 1 - diag_i
+
+    return diags[diag_i][0]
+\end{minted}
+\newpage
+Here is a practical example of the resulting cache obtained for the example configuration described earlier in figure \ref{tab:memoization_02} :
+
+\begin{table}[H]
+\centering
+\begin{TAB}(e,1cm,1cm){|c:c:c:c:c:c:c|}{|c:c:c:c:c:c:c|}
+\hline
+(18, 13)  &(17, 9)   &(13, 9)   &(16, 9)   &(12, 9)   &(9, 0)    &(4, 0) \\
+(25, 10)  &(13, 17)  &(17, 9)   &(16, 12)  &(9, 8)    &(9, 4)    &0      \\
+\end{TAB}
+\caption{Resulting entries for the diagonals optimized cache}
+\label{tab:tabulation_04}
+\end{table}
+
+In the first row, in coordinates [0,0] is the final score for both players. Since diagonals don't have to be cleared between computations, old values are simply overwritten and what we see in the cache are mostly values from diagonals computed in previous iterations.
 
 \subsubsection{Tabulation solution complexity}
 
--- EASY : Can be directly taken from the course material
+After replacing the recursive overheads in the memoized version, computing the time complexity gets easier. Indeed, the time-expensive computations are those we do while following the diagonal such as in figure \ref{fig:tabulation_02}. The first diagonal costs $n$ computations, the second one $(n - 1)$ and so on, leading to a total cost of $\sum_{k = 1}^{n} \mathcal{O}(k) = \mathcal{O}(\frac{n(n+1)}{2})$ : the complexity is thus quadratic in $n$.
+\ezskip As mentioned earlier, the space complexity is in $\mathcal{O}(n)$.
 
-\subsection{Extensions} \label{sub:extensions}
-% TODO complete, RESPONSIBLE PERSON: Habib
--- add one version of the algorithm returning the probability of success instead of assuming sister takes choice A or B
--- Maybe I'll look into this later
+\subsection{General case}
+
+In the general case, the sister may not always pick the right-most card if she has to choose between two cards of equal cost.
+Going down the solution tree, if we get to a point for which we have $CARDS[i] = CARDS[j]$, and the sister is the one playing, we should be exploring both cases. However, in one case the optimal solution exploration might be losing or winning.
+
+\ezskip Thus, to model the best the problem, we should explore both options and compute probabilities of winning for each. As an example, if one subtree leads to a winning optimal solution, and the other leads to a losing one, assuming equiprobability of the sister's choice our program should return a 0.5 probability of winning, instead of a binary answer.
+
+\ezskip
+However, we did not have time to implement this version of the solution.
 
 % --------------------------------------------------------------
 %                         Conclusion
 % --------------------------------------------------------------
 
-\section{Conclusion and feedback}
-
+\newpage
+\section{Conclusion}
 %% TODO complete, RESPONSIBLE PERSON: Manuel
--- Write something in general
+Our main goal in this APP is winning a card game regardless of which player starts. We first demonstrated how we could win using a greedy algorithm. However, as winning was not systematic even when we could, we extended our solution to cover all possible solution sets in order to be sure that we can get the best possible score, given the initial configuration of the cards. As this method was not efficient in terms of time complexity, dynamic programming was introduced as the optimum solution for winning (based on assumptions and conditions).
 
-% --------------------------------------------------------------
-%                            Abstract
-% --------------------------------------------------------------
+\ezskip In general, the dynamic programming method is one of the few algorithmic techniques that can take problems for which the naive solutions require exponential time and produce polynomial time algorithms. In this APP, dynamic programming was used not only to solve the card game but also to lead us to an optimal game strategy.
+
 
 \end{document}
